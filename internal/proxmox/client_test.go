@@ -28,8 +28,7 @@ func TestIsRunning(t *testing.T) {
 		Timeout:            1 * time.Second,
 	})
 
-	running, err := client.IsRunning(context.Background())
-	require.NoError(t, err)
+	running := client.IsRunning(context.Background())
 	require.True(t, running)
 }
 
@@ -46,8 +45,7 @@ func TestIsRunning_Error(t *testing.T) {
 		Timeout:            1 * time.Second,
 	})
 
-	running, err := client.IsRunning(context.Background())
-	require.Error(t, err)
+	running := client.IsRunning(context.Background())
 	require.False(t, running)
 }
 
@@ -175,10 +173,14 @@ func TestGetStatus_FunctionalTest(t *testing.T) {
 		InsecureSkipVerify: true,
 	})
 
-	isRunning, err := client.IsRunning(context.Background())
-	require.Nil(t, err)
+	isRunning := client.IsRunning(context.Background())
 
 	fmt.Printf("Is running? %v\n", isRunning)
+
+	if !isRunning {
+		fmt.Println("Proxmox is not running, can not get VMs")
+		return
+	}
 
 	vms, err := client.GetVirtualMachines(context.Background())
 	require.Nil(t, err)
