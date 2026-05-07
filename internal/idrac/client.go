@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/iulianpascalau/mx-import-db-orchestrator/internal/common"
@@ -50,10 +49,7 @@ func NewClient(config ClientConfig) *redfishClient {
 		timeout = 10 * time.Second
 	}
 
-	baseURL := config.BaseURL
-	if baseURL != "" && !strings.HasPrefix(baseURL, "http://") && !strings.HasPrefix(baseURL, "https://") {
-		baseURL = "https://" + baseURL
-	}
+	baseURL := common.EnsureHTTPSPrefix(config.BaseURL)
 
 	return &redfishClient{
 		httpClient: &http.Client{
@@ -107,7 +103,8 @@ func (c *redfishClient) GetPowerState(ctx context.Context) (common.PowerState, e
 		PowerState string `json:"PowerState"`
 	}
 
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
 		return "", fmt.Errorf("failed to decode response: %w", err)
 	}
 
