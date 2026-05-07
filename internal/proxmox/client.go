@@ -76,19 +76,19 @@ func (c *proxmoxClient) doRequest(ctx context.Context, method, endpoint string, 
 	return c.httpClient.Do(req)
 }
 
-func (c *proxmoxClient) IsRunning(ctx context.Context) (bool, error) {
+func (c *proxmoxClient) IsRunning(ctx context.Context) bool {
 	resp, err := c.doRequest(ctx, http.MethodGet, "/api2/json/version", nil)
 	if err != nil {
-		return false, fmt.Errorf("failed to execute request: %w", err)
+		return false
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		return false, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+		return false
 	}
-	return true, nil
+	return true
 }
 
 type resourceResponse struct {

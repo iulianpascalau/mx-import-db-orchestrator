@@ -15,7 +15,7 @@ type VirtualMachine struct {
 // Client defines the interface for interacting with a Proxmox server
 type Client interface {
 	// IsRunning checks if the Proxmox server API is reachable and responding
-	IsRunning(ctx context.Context) (bool, error)
+	IsRunning(ctx context.Context) bool
 
 	// GetVirtualMachines fetches all VMs and LXCs along with their tags
 	GetVirtualMachines(ctx context.Context) ([]VirtualMachine, error)
